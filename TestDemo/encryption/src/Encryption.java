@@ -11,6 +11,7 @@ public class Encryption {
     private static String pwd4 = "0706";
 
     public static void main(String[] args) throws Exception {
+
         Scanner in=new Scanner(System.in);
         System.out.println("请输入第一个密钥：");
         String p1=in.next();

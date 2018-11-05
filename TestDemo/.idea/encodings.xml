@@ -4,7 +4,9 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/.idea" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/alogrithms" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/alogrithms/src/TSP.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/alogrithms/src/com/cn/express/DistanceMatrix.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/alogrithms/src/com/cn/express/TSP.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/alogrithms/test.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/layui" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />

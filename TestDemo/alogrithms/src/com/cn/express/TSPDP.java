@@ -1,24 +1,27 @@
+package com.cn.express;
 
 import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 
 public class TSPDP {
-    private int[][] graph;
+    private double[][] graph;
+    private List<Point> points;
     HashMap<Integer, ArrayList<Integer>> idtoset = new HashMap<Integer, ArrayList<Integer>>();
     //get subset by id
     HashMap< ArrayList<Integer>, Integer> settoid = new HashMap< ArrayList<Integer>, Integer>();
     //get id by subset
-    public TSPDP(int[][] graph){
+    public TSPDP(double[][] graph,List<Point> points){
         this.graph = graph;
+        this.points=points;
     }
     /**
      * Solve Traveling Salesperson Probl  em by Dynamic Programming
      * @return the min length
      * */
-    public int DP(){
+    public double DP(){
         long starttime=System.currentTimeMillis();
         int n = graph.length;
         int[] vertex = new int[n-1];
@@ -28,7 +31,7 @@ public class TSPDP {
             vertexid++;
         }
         getsubsets(vertex);
-        int[][] D = new int[n][settoid.size()];//To record the distance
+        double[][] D = new double[n][settoid.size()];//To record the distance
         int[][] P = new int[n][settoid.size()];//To track the path
 
         for(int i = 1; i < n; i++){
@@ -43,8 +46,8 @@ public class TSPDP {
                     if(subset.contains(i))
                         continue;
 
-                    int min = 10000;
-                    int value = 0;
+                    double min = 10000;
+                    double value = 0;
                     /*System.out.println("++++++++++++++k="+k+"+++++++++++++++++++");
                     System.out.println("++++++++++++++id="+id+"+++++++++++++++++++");
                     System.out.println("++++++++++++++i="+i+"+++++++++++++++++++");*/
@@ -87,12 +90,12 @@ public class TSPDP {
         //System.out.println("+++++++++++++++++++打印Vminusv0++++++++++++++");
         //System.out.println(Vminusv0.toString());
         int vminusv0id = settoid.get(Vminusv0);
-        int min = Integer.MAX_VALUE;
+        double min = Integer.MAX_VALUE;
         for(int j : Vminusv0){
             ArrayList<Integer> Vminusv0vj = remove(Vminusv0,j);
             int idj = settoid.get(Vminusv0vj);
 
-            int value = (this.graph[0][j]!=0 && D[j][idj]!=0) ? this.graph[0][j] + D[j][idj]:0;
+            double value = (this.graph[0][j]!=0 && D[j][idj]!=0) ? this.graph[0][j] + D[j][idj]:0;
 
 
             if(value < min && value != 0){
@@ -104,9 +107,10 @@ public class TSPDP {
         D[0][vminusv0id] = min;
        /* System.out.println("+++++++++++++++最后++++++++++++");
         System.out.println("min="+min+",中间点="+P[0][vminusv0id]);*/
+        //generateOpttour(P, Vminusv0);
         generateOpttour(P, Vminusv0);
         long endtime=System.currentTimeMillis();
-        System.out.println("计算耗时:"+(endtime-starttime)+"ms");
+        System.out.println("每块区域最优路径计算耗时:"+(endtime-starttime)+"ms");
         return D[0][vminusv0id];
     }
 
@@ -125,23 +129,25 @@ public class TSPDP {
      * @param V containing all vertexes   except V0
      * */
     public void generateOpttour(int[][] P, ArrayList<Integer> V){
-        String path = "1->";
+        //String path = "1->";
+        String path=points.get(0).getAddress()+" -> ";
         ArrayList<Integer> Set = V;
         int start = 0;
         while(!Set.isEmpty()){
-           // System.out.println("set="+Set.toString());
+
             int id = settoid.get(Set);
-            //System.out.println("id="+id);
-            String vertex = String.valueOf(P[start][id]+1);
-            //System.out.println("vertex="+vertex);
-            path += vertex + "->";
+           // String vertex = String.valueOf(P[start][id]+1);
+            String vertex = points.get(P[start][id]).getAddress();
+            path += vertex + " -> ";
             Set = remove(Set, P[start][id]);
             start = P[start][id];
-           // System.out.println("start="+start);
+
         }
-        path += "1";
+        //path += "1"
+        path+=points.get(0).getAddress();
         System.out.println("遍历地区顺序为:"+path);
     }
+
     /**
      * Get all subsets of a input set. And number subsets
      * All results will be recorded in member variables
@@ -194,17 +200,18 @@ public class TSPDP {
         return dest;
     }
 
-    public static void main(String[] args){
 
-        TSPDP test = new TSPDP(new int[][]{
+    /*public static void main(String[] args){
+
+        TSPDP test = new TSPDP(new double[][]{
                 {0,16,16,7,13,6},
                 {16,0,9,5,19,7},
                 {16,9,0, 7,9,6},
                 {7,5, 7,0,7,7},
                 {13,19,9,7,0,13},
                 {6,7,6,7,13,0}});
-        int dis = test.DP();
+        double dis = test.DP();
         System.out.println("最小路径为:"+dis);
 
-    }
+    }*/
 }
