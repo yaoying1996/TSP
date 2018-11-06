@@ -5,14 +5,15 @@ public class Point {
     private String address;//地址
     private double x;//x坐标
     private double y;//y坐标
-    private double weight;//每个地方待取的快递（快递员送过去）
-    private double stock;//每个地方待寄的快递(给快递员)
+    private double weight;//每个地方待寄的快递（给快递员）
+    private double stock;//每个地方待取的快递(快递员送过去)
 
-    public Point(double x,double y,String address,double weight){
+    public Point(double x,double y,String address,double weight,double stock){
         this.x=x;
         this.y=y;
         this.address=address;
         this.weight=weight;
+        this.stock=stock;
     }
 
     public double getWeight() {

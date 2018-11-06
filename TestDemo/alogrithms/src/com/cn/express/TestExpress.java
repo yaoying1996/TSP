@@ -3,32 +3,72 @@ package com.cn.express;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TestExpress {
 
     public static void main(String[] args){
-        List<Point> points=readTxt("G:\\ideaspace\\TSP\\TestDemo\\alogrithms\\points.txt");
+        //读取所有的点
+        List<Point> points=readTxt("G:\\ideaspace\\TSP\\TestDemo\\alogrithms\\test.txt");
+        //快递总重量
         double weight=0;
         for(Point po:points) weight+=po.getWeight();
         System.out.println("+++++++++++++++++至少分成"+((int)weight/25+1)+"个区域+++++++++++++++++");
+        //所有点的距离矩阵，用来分区
         DistanceMatrix d=new DistanceMatrix(points);
         double[][] dMatrix=d.dMatrix();
         Region r=new Region(points,dMatrix);
         List<List<Point>> region=r.partition();
-        for(List<Point> list :region){
-            for(Point p :list)
-                System.out.print(p.getAddress()+"\t");
+
+        int num=1;
+        while(true){
+            System.out.println("++++++++++经过第"+num+"次分区后++++++++++");
+            for(Point point:points){
+                System.out.print(point.getAddress()+"\t"+point.getWeight()+"\t"+point.getStock());
+                System.out.println();
+            }
+
+            System.out.println("+++++++++++++++每次的遍历路径++++++++++++++");
+            for(List<Point> list :region){
+                for(Point p :list)
+                    System.out.print(p.getAddress()+"\t");
+                System.out.println();
+            }
             System.out.println();
+
+            boolean flag=false; //判断是否还有送的货，即所有的stock为0
+            for(Iterator<Point> it=points.iterator();it.hasNext();){
+                Point dp=it.next();
+                if(dp.getX()==0&&dp.getY()==0) continue;
+                if(dp.getWeight()==0&&dp.getStock()==0)
+                    it.remove();
+                if(dp.getStock()!=0)
+                    flag=true;
+            }
+
+
+            if(points.size()==1) break;
+            else{
+                if(!flag) points.get(0).setStock(0);//快递员只收货
+                d=new DistanceMatrix(points);
+                dMatrix=d.dMatrix();
+                r=new Region(points,dMatrix);
+                region.addAll(r.partition());
+                num++;
+            }
+
         }
 
+
         //对每条路径求出最优走法
-        Point start=new Point(0,0,"快递起始地址",0);
+        Point start=new Point(0,0,"快递起始地址",0,25 );
         double distance=0;
         double time=0;
         DecimalFormat df=new DecimalFormat("#.##");
         for(List<Point> list :region){
-           list.add(0,start);
+            if(list.size()==0) continue;
+             list.add(0,start);
             //求每条路径的距离矩阵
             DistanceMatrix dlist=new DistanceMatrix(list);
             TSPDP tsp=new TSPDP(dlist.dMatrix(),list);
@@ -71,7 +111,7 @@ public class TestExpress {
 
         List<Point> points = new ArrayList<>();
         //加入初始快递起点(0,0)快递起点站
-        Point start=new Point(0,0,"快递起始位置",0);
+        Point start=new Point(0,0,"快递起始位置",0,25);
         points.add(start);
         for (String s : arrayList) {
             String[] object = s.split("\t");
@@ -79,12 +119,18 @@ public class TestExpress {
             double x = Double.parseDouble(object[1]);
             double y = Double.parseDouble(object[2]);
             double weight = Double.parseDouble(object[3]);
-            Point point = new Point(x, y, address, weight);
+            double stock = Double.parseDouble(object[4]);
+            Point point = new Point(x, y, address, weight,stock);
             points.add(point);
         }
         return points;
     }
 
+    /**
+     * 检测距离矩阵是否合法
+     * @param dArray
+     * @return
+     */
     private static  boolean check(double[][] dArray) {
       /*  if (dArray.length < 3) {
             System.out.println("错误信息：距离矩阵长度过小");

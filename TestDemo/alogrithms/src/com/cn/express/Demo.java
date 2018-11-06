@@ -26,7 +26,8 @@ public class Demo {
         }*/
         //value();
         double a=1.00;
-        System.out.println(a/3);
+        if(a>0)System.out.println(1);
+        else if(a>0)System.out.println(1);
 
     }
    /*public static void value() {
