@@ -4,6 +4,7 @@ import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TSPDP {
@@ -31,6 +32,7 @@ public class TSPDP {
             vertexid++;
         }
         getsubsets(vertex);
+        //System.out.println("settoid="+settoid.size());
         double[][] D = new double[n][settoid.size()];//To record the distance
         int[][] P = new int[n][settoid.size()];//To track the path
 
@@ -48,10 +50,6 @@ public class TSPDP {
 
                     double min = 10000;
                     double value = 0;
-                    /*System.out.println("++++++++++++++k="+k+"+++++++++++++++++++");
-                    System.out.println("++++++++++++++id="+id+"+++++++++++++++++++");
-                    System.out.println("++++++++++++++i="+i+"+++++++++++++++++++");*/
-                    //System.out.println("subset[]="+subset.toString());
                     for(int j : subset){
                         ArrayList<Integer> Aminusj = remove(subset, j);
                         int idj = settoid.get(Aminusj);
@@ -77,18 +75,12 @@ public class TSPDP {
                 }
             }
         }
-       /* System.out.println("输出P为：");
-        for(int i=0;i<P.length;i++){
-            for(int j=0;j<P[i].length;j++)
-                System.out.print(P[i][j]+"\t");
-            System.out.println();
-        }*/
+
         ArrayList<Integer> Vminusv0 = new ArrayList<Integer>();
         for(int i = 0; i < vertex.length; i++){
             Vminusv0.add(vertex[i]);
         }
-        //System.out.println("+++++++++++++++++++打印Vminusv0++++++++++++++");
-        //System.out.println(Vminusv0.toString());
+
         int vminusv0id = settoid.get(Vminusv0);
         double min = Integer.MAX_VALUE;
         for(int j : Vminusv0){
@@ -105,12 +97,10 @@ public class TSPDP {
         }
         if(min < 99999);
         D[0][vminusv0id] = min;
-       /* System.out.println("+++++++++++++++最后++++++++++++");
-        System.out.println("min="+min+",中间点="+P[0][vminusv0id]);*/
-        //generateOpttour(P, Vminusv0);
         generateOpttour(P, Vminusv0);
         long endtime=System.currentTimeMillis();
         System.out.println("每块区域最优路径计算耗时:"+(endtime-starttime)+"ms");
+
         return D[0][vminusv0id];
     }
 
@@ -172,14 +162,7 @@ public class TSPDP {
             idtoset.put(id, s);
             settoid.put(s, id);
             id++;
-          /*  System.out.println("当i的值="+i+",idtoset的值为");
-            for(Map.Entry<Integer, ArrayList<Integer>> entry:idtoset.entrySet())
-                System.out.print("("+entry.getKey()+","+entry.getValue().toString()+")");
-            System.out.println();*/
-           /* System.out.println("当i的值="+i+",settoid的值为");
-            for(Map.Entry<ArrayList<Integer>, Integer> entry:settoid.entrySet())
-                System.out.print("("+entry.getKey()+","+entry.getValue().toString()+")");
-            System.out.println();*/
+
         }
     }
     /**

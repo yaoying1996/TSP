@@ -21,7 +21,7 @@ public class Region {
         double origin=points.get(0).getStock();
         int count=0;
         for(int i=0;i<points.size()&&select.size()<(points.size()-1)&&count<points.size();count++){
-
+            if (points.size()==1) return null;
             //记录第i个点到哪个点最近且sum不超过25kg
             Map<Integer,Double> map=new TreeMap<>();
 
@@ -32,10 +32,7 @@ public class Region {
 
             //排序
             List<Map.Entry<Integer, Double>> list=valueUpSort(map);
-           /* System.out.println("------------i="+i+"--------------------");
-            for (Map.Entry<Integer, Double> entry : list) {
-                System.out.println(entry.getKey() + ":" + entry.getValue());
-            }*/
+
             //记录从i到j是否又满足新增的j点 sum值不超过25kg false表示没有点可以选择了 true表示j为下个点
             boolean flag=false;
 
@@ -47,34 +44,29 @@ public class Region {
                 if(origin<0)
                     sum=sum+points.get(j).getWeight();
                 else  sum=sum+points.get(j).getWeight()-points.get(j).getStock();
-                //总量总和小于25kg
-                if(sum<=25||origin>=0){
-                    boolean b=false;
-                    if(sum>25){
-                        sum=sum-points.get(j).getWeight();//不能装货能卸货
-                        points.get(j).setStock(0);
-                        b=true;
-                    }
-                    if(origin<0){//不能卸货能装货
-                        origin+=points.get(j).getStock();
-                        points.get(j).setWeight(0);
-                        b=true;
-                    }
-                    if(!b){
-                        points.get(j).setStock(0);
-                        points.get(j).setWeight(0);
-                    }
-                    flag=true;//有路可走
-                    re.add(points.get(j));//每块区域加上j点
-                    select.add(j);
-                    i=j;//i->J j为下次遍历的起点
-                    if(select.size()==points.size()-1) region.add(re);//如果j为最后一个未被选中的点，分区操作结束
+                if(sum<=25&&origin>=0){//可卸货可装货
+                    points.get(j).setStock(0);
+                    points.get(j).setWeight(0);
+                    i=add(j);
+                    flag=true;
                     break;
-                }else if(origin<0){//不能卸货也不能装货
+                }else if(sum<=25&&origin<0){//可装货不可卸货
+                    origin+=points.get(j).getStock();
+                    points.get(j).setWeight(0);
+                    flag=true;//有路可走;
+                    i=add(j);
+                }else
+                 out : if(sum>25&&origin>=0){//可卸货不能装货
+                     sum=sum-points.get(j).getWeight();//不能装货能卸货
+                     if(points.get(j).getStock()==0) break out;//当该点的卸货重量为0时，该点不需要卸货
+                    points.get(j).setStock(0);
+                    flag=true;
+                    i=add(j);
+                    break;
+                }else if(sum>25&&origin<0){//不能卸货也不能装货
                     sum-=points.get(j).getWeight();
                     origin+=points.get(j).getStock();
                 }
-                //System.out.println("++++++++++++++sum="+sum+"+++++++++++++++++");
             }
             //遍历所有的点，已经没有可以走的点，则重新开始新的路径
             if(!flag){
@@ -82,12 +74,28 @@ public class Region {
                 origin=points.get(0).getStock();
                 //加上已经遍历好的上个区域 ，开始下个区域的选择
                 region.add(re);
+                if(re.size()==0) return null;
                 re= new  ArrayList<>();
                 i=0;
             }
 
         }
         return region;
+    }
+
+
+    /**
+     * 遍历路径上加上j点
+     * @param j
+     * @return
+     */
+    private int  add(int j){
+
+        re.add(points.get(j));//每块区域加上j点
+        select.add(j);
+        int i=j;//i->J j为下次遍历的起点
+        if(select.size()==points.size()-1) region.add(re);//如果j为最后一个未被选中的点，分区操作结束
+        return i;
     }
 
     /**
