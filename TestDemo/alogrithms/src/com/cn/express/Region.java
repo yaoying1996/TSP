@@ -19,9 +19,14 @@ public class Region {
 
         double sum=points.get(0).getStock();
         double origin=points.get(0).getStock();
-        int count=0;
-        for(int i=0;i<points.size()&&select.size()<(points.size()-1)&&count<points.size();count++){
+        /*System.out.println("---------------每次加入的point--------------------");
+        for(int i=0;i<points.size();i++)
+            System.out.print(points.get(i).getAddress()+"\t");
+        System.out.println();*/
+
+        for(int i=0;i<points.size()&&select.size()<(points.size()-1);){
             if (points.size()==1) return null;
+
             //记录第i个点到哪个点最近且sum不超过25kg
             Map<Integer,Double> map=new TreeMap<>();
 
@@ -50,14 +55,16 @@ public class Region {
                     i=add(j);
                     flag=true;
                     break;
-                }else if(sum<=25&&origin<0){//可装货不可卸货
-                    origin+=points.get(j).getStock();
-                    points.get(j).setWeight(0);
-                    flag=true;//有路可走;
-                    i=add(j);
+                }else
+                    out1: if(sum<=25&&origin<0){//可装货不可卸货
+                        origin+=points.get(j).getStock();
+                        if(points.get(j).getWeight()==0) break out1;//当该点的装货货重量为0时，该点不需要装货
+                         points.get(j).setWeight(0);
+                         flag=true;//有路可走;
+                         i=add(j);
                 }else
                  out : if(sum>25&&origin>=0){//可卸货不能装货
-                     sum=sum-points.get(j).getWeight();//不能装货能卸货
+                     sum=sum-points.get(j).getWeight();//能卸货不能装货
                      if(points.get(j).getStock()==0) break out;//当该点的卸货重量为0时，该点不需要卸货
                     points.get(j).setStock(0);
                     flag=true;
@@ -70,16 +77,33 @@ public class Region {
             }
             //遍历所有的点，已经没有可以走的点，则重新开始新的路径
             if(!flag){
+              /*  System.out.println("---------------执行过---------------------");
+                System.out.println("------------------------re-----------------------");
+                for(Point p: re)
+                    System.out.print(p.getAddress()+"\t"+p.getWeight()+"\t"+p.getStock());
+                System.out.println();*/
                 sum=points.get(0).getStock();
                 origin=points.get(0).getStock();
                 //加上已经遍历好的上个区域 ，开始下个区域的选择
                 region.add(re);
-                if(re.size()==0) return null;
+                if(re.size()==0) return  region;
+
+
                 re= new  ArrayList<>();
                 i=0;
             }
 
         }
+
+    /*    //返回的region
+        System.out.println("-----------------返回的region-----------------------");
+        for(List<Point> list :region){
+            if(list==null||list.size()==0)System.out.println("----------------------------------");
+            for(Point p :list)
+                System.out.print(p.getAddress()+"\t");
+            System.out.println();
+        }*/
+
         return region;
     }
 
@@ -90,7 +114,7 @@ public class Region {
      * @return
      */
     private int  add(int j){
-
+        System.out.println("------每次加入地址-----"+points.get(j).getAddress());
         re.add(points.get(j));//每块区域加上j点
         select.add(j);
         int i=j;//i->J j为下次遍历的起点

@@ -58,8 +58,9 @@ public class TestExpress {
                 d=new DistanceMatrix(points);
                 dMatrix=d.dMatrix();
                 r=new Region(points,dMatrix);
-                if(r.partition()!=null) {
-                    region.addAll(r.partition());
+                List<List<Point>> listadd=r.partition();
+                if(listadd!=null) {
+                    region.addAll(listadd);
                 }
                 num++;
             }
@@ -67,7 +68,7 @@ public class TestExpress {
         }
 
 
-        //对每条路径求出最优走法
+        //对每条路径求出最优走法  动态规划
         Point start=new Point(0,0,"快递起始地址",0,25 );
         double distance=0;
         double time=0;
@@ -86,6 +87,27 @@ public class TestExpress {
             System.out.println("最小路径为:"+dis+"m");
             System.out.println("在区域送货需要的时间:"+Double.parseDouble(df.format(t))+"h");
         }
+
+      /*  //对每条路径求出最优走法  贪心算法
+        Point start=new Point(0,0,"快递起始地址",0,25 );
+        double distance=0;
+        double time=0;
+        DecimalFormat df=new DecimalFormat("#.##");
+        for(List<Point> list :region){
+            System.out.println();
+            if(list.size()==0) continue;
+            list.add(0,start);
+            //求每条路径的距离矩阵
+            DistanceMatrix dlist=new DistanceMatrix(list);
+            // TSPDP tsp=new TSPDP(dlist.dMatrix(),list);
+            double dis = new TSPDP(dlist.dMatrix(),list).DP();
+            double t=(dis/20)/1000+2.0/3.0;
+            time+=Double.parseDouble(df.format(t));
+            distance+=dis;
+            System.out.println("最小路径为:"+dis+"m");
+            System.out.println("在区域送货需要的时间:"+Double.parseDouble(df.format(t))+"h");
+        }
+*/
         System.out.println();
         System.out.println("所有路径的最小值总和为："+Double.parseDouble(df.format(distance))+"m");
         System.out.println("前提：每个送货点停留的时间为15min，速度20km/h，则需要的总时间为："+Double.parseDouble(df.format(time))+"h");

@@ -14,6 +14,9 @@ public class TSPDP {
     //get subset by id
     HashMap< ArrayList<Integer>, Integer> settoid = new HashMap< ArrayList<Integer>, Integer>();
     //get id by subset
+
+    private List<Integer> select=new ArrayList<>();//已经选择过的点，不能再选择
+
     public TSPDP(double[][] graph,List<Point> points){
         this.graph = graph;
         this.points=points;
@@ -24,6 +27,10 @@ public class TSPDP {
      * */
     public double DP(){
         long starttime=System.currentTimeMillis();
+
+        double sum=points.get(0).getStock();
+        double origin=points.get(0).getStock();
+
         int n = graph.length;
         int[] vertex = new int[n-1];
         int vertexid = 1;
@@ -50,11 +57,14 @@ public class TSPDP {
 
                     double min = 10000;
                     double value = 0;
+                    int status=-1; //0:可卸货可装货 1:可装货不可卸货 2:可卸货不能装货 3:不能卸货也不能装货
+
                     for(int j : subset){
                         ArrayList<Integer> Aminusj = remove(subset, j);
                         int idj = settoid.get(Aminusj);
                         try{
                             value = this.graph[i][j] + D[j][idj];
+
                            // System.out.println("graph["+i+"]["+j+"]+" + "D["+j+"]["+idj+"]="+value);
                         }catch(Exception e){
                             System.out.print("Error!___");
@@ -64,13 +74,49 @@ public class TSPDP {
                             System.out.println(" D.length: "+ String.valueOf(D.length));
                         }
                         if(value < min && value != 0){
-                            min = value;
-                            //System.out.println("P["+i+"]["+id+"]="+j);
-                            P[i][id] = j;
+                            origin-=points.get(j).getStock();
+                            if(origin<0)
+                                sum=sum+points.get(j).getWeight();
+                            else  sum=sum+points.get(j).getWeight()-points.get(j).getStock();
+                            if(sum<=25&&origin>=0){//可卸货可装货
+                                min = value;
+                                P[i][id] = j;
+                                status=0;
+                            }else
+                                out1:   if(sum<=25&&origin<0){//可装货不可卸货
+                                            origin+=points.get(j).getStock();
+                                            if(points.get(j).getWeight()==0) break out1;//当该点的装货货重量为0时，该点不需要装货
+                                            min = value;
+                                            P[i][id] = j;
+                                            status=1;
+                            }else
+                                out : if(sum>25&&origin>=0){//可卸货不能装货
+                                    sum=sum-points.get(j).getWeight();//不能装货能卸货
+                                    if(points.get(j).getStock()==0) break out;//当该点的卸货重量为0时，该点不需要卸货
+                                    min = value;
+                                    P[i][id] = j;
+                                    status=2;
+                                }else if(sum>25&&origin<0){//不能卸货也不能装货
+                                    sum-=points.get(j).getWeight();
+                                    origin+=points.get(j).getStock();
+                                    status=3;
+                                }
+
                         }
                     }
-                    if(min < 9999);
-                    D[i][id] = min;
+                    if(min < 9999){
+                        D[i][id] = min;
+                        int j= P[i][id];
+                        if (status==0){
+                            points.get(j).setStock(0);
+                            points.get(j).setWeight(0);
+                        }else if (status==1){
+                            points.get(j).setWeight(0);
+                        }else if(status==2){
+                            points.get(j).setStock(0);
+                        }
+                    }
+
                     //System.out.println("D["+i+"]["+id+"]="+min);
                 }
             }
