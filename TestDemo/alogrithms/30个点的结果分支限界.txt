@@ -1,0 +1,61 @@
+F:\java\jdk1.8\bin\java -Didea.launcher.port=7539 "-Didea.launcher.bin.path=F:\安装文件夹\idea\IntelliJ IDEA 2016.1.3\bin" -Dfile.encoding=UTF-8 -classpath "F:\java\jdk1.8\jre\lib\charsets.jar;F:\java\jdk1.8\jre\lib\deploy.jar;F:\java\jdk1.8\jre\lib\ext\access-bridge-64.jar;F:\java\jdk1.8\jre\lib\ext\cldrdata.jar;F:\java\jdk1.8\jre\lib\ext\dnsns.jar;F:\java\jdk1.8\jre\lib\ext\jaccess.jar;F:\java\jdk1.8\jre\lib\ext\jfxrt.jar;F:\java\jdk1.8\jre\lib\ext\localedata.jar;F:\java\jdk1.8\jre\lib\ext\nashorn.jar;F:\java\jdk1.8\jre\lib\ext\sunec.jar;F:\java\jdk1.8\jre\lib\ext\sunjce_provider.jar;F:\java\jdk1.8\jre\lib\ext\sunmscapi.jar;F:\java\jdk1.8\jre\lib\ext\sunpkcs11.jar;F:\java\jdk1.8\jre\lib\ext\zipfs.jar;F:\java\jdk1.8\jre\lib\javaws.jar;F:\java\jdk1.8\jre\lib\jce.jar;F:\java\jdk1.8\jre\lib\jfr.jar;F:\java\jdk1.8\jre\lib\jfxswt.jar;F:\java\jdk1.8\jre\lib\jsse.jar;F:\java\jdk1.8\jre\lib\management-agent.jar;F:\java\jdk1.8\jre\lib\plugin.jar;F:\java\jdk1.8\jre\lib\resources.jar;F:\java\jdk1.8\jre\lib\rt.jar;G:\ideaspace\TSP\TestDemo\out\production\alogrithms;F:\安装文件夹\idea\IntelliJ IDEA 2016.1.3\lib\idea_rt.jar" com.intellij.rt.execution.application.AppMain com.cn.express.TestBBExpress
+
+快递员需要携带的快递初始重量为25kg
+最小路径为:5073.86m
+构成的边为：
+快递起始地址 -> 华南理工1区 -> 华南理工2区 -> 华南理工3区 -> 华南理工29区 -> 华南理工24区 -> 华南理工4区 -> 快递起始地址
+在区域送货需要的时间:0.92h
+
+快递员需要携带的快递初始重量为23kg
+最小路径为:7296.9m
+构成的边为：
+快递起始地址 -> 华南理工12区 -> 华南理工17区 -> 华南理工21区 -> 华南理工19区 -> 华南理工18区 -> 华南理工15区 -> 华南理工13区 -> 快递起始地址
+在区域送货需要的时间:1.03h
+
+快递员需要携带的快递初始重量为24kg
+最小路径为:5558.06m
+构成的边为：
+快递起始地址 -> 华南理工5区 -> 华南理工7区 -> 华南理工8区 -> 华南理工6区 -> 华南理工10区 -> 华南理工14区 -> 快递起始地址
+在区域送货需要的时间:0.94h
+
+快递员需要携带的快递初始重量为24kg
+最小路径为:9925.48m
+构成的边为：
+快递起始地址 -> 华南理工9区 -> 华南理工16区 -> 华南理工11区 -> 华南理工27区 -> 华南理工28区 -> 快递起始地址
+在区域送货需要的时间:1.16h
+
+快递员需要携带的快递初始重量为18kg
+最小路径为:7929.64m
+构成的边为：
+快递起始地址 -> 华南理工20区 -> 华南理工22区 -> 华南理工23区 -> 华南理工30区 -> 快递起始地址
+在区域送货需要的时间:1.06h
+
+快递员需要携带的快递初始重量为19kg
+最小路径为:7235.08m
+构成的边为：
+快递起始地址 -> 华南理工26区 -> 华南理工25区 -> 快递起始地址
+在区域送货需要的时间:1.03h
+
+快递员需要携带的快递初始重量为24kg
+最小路径为:7401.4m
+构成的边为：
+快递起始地址 -> 华南理工24区 -> 华南理工29区 -> 华南理工27区 -> 华南理工21区 -> 华南理工17区 -> 华南理工2区 -> 华南理工1区 -> 快递起始地址
+在区域送货需要的时间:1.04h
+
+快递员需要携带的快递初始重量为18kg
+最小路径为:7756.77m
+构成的边为：
+快递起始地址 -> 华南理工18区 -> 华南理工16区 -> 华南理工14区 -> 华南理工9区 -> 快递起始地址
+在区域送货需要的时间:1.05h
+
+快递员需要携带的快递初始重量为16kg
+最小路径为:8679.78m
+构成的边为：
+快递起始地址 -> 华南理工19区 -> 华南理工30区 -> 华南理工5区 -> 快递起始地址
+在区域送货需要的时间:1.1h
+
+所有路径的最小值总和为：66856.97m
+前提：每个送货点停留的时间为15min，速度20km/h，则需要的总时间为：9.33h
+前提：每个快递员每天的工作时间为6h，则需要2个快递员
+
+Process finished with exit code 0

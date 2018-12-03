@@ -6,7 +6,7 @@ public class Region {
 
     private List<Point> points;
     private double[][] dMatrix;
-    private List<List<Point>> region=new ArrayList<>();//记录整个区域
+    private List<List<Point>> region=new  ArrayList<>();//记录整个区域
     private List<Point> re=new ArrayList<>();//记录每块区域的点
     private List<Integer> select=new ArrayList<>();//已经选择过的点，不能再选择
 
@@ -50,26 +50,48 @@ public class Region {
                     sum=sum+points.get(j).getWeight();
                 else  sum=sum+points.get(j).getWeight()-points.get(j).getStock();
                 if(sum<=25&&origin>=0){//可卸货可装货
+                    if(points.get(j).getWeight()==0&&points.get(j).getStock()==0) continue;//该点不应该出现
+                    if(points.get(j).getWeight()==0){//该地不可装货 待装货物为0 只可以卸货
+                        points.get(j).setStock(0);
+                        flag=true;
+                        i=add(3,j);
+                        //System.out.println("可卸货不能装货:"+ points.get(j).getAddress()+",sum="+sum+",origin="+origin);
+                        break;
+                    }
+                    if(points.get(j).getStock()==0){//该地不可以卸货 待卸货物为0 只可以装货
+                        points.get(j).setWeight(0);
+                        flag=true;//有路可走;
+                        i=add(2,j);
+                      //  System.out.println("可装货不可卸货:"+ points.get(j).getAddress()+",sum="+sum+",origin="+origin);
+                        break;
+                    }
+                   //System.out.println("可卸货可装货:"+ points.get(j).getAddress()+",sum="+sum+",origin="+origin);
                     points.get(j).setStock(0);
                     points.get(j).setWeight(0);
-                    i=add(j);
+                    i=add(1,j);
                     flag=true;
                     break;
                 }else
                     out1: if(sum<=25&&origin<0){//可装货不可卸货
                         origin+=points.get(j).getStock();
-                        if(points.get(j).getWeight()==0) break out1;//当该点的装货货重量为0时，该点不需要装货
+                        if(points.get(j).getWeight()==0)
+                            break out1;//当该点的装货货重量为0时，该点不需要装货
                          points.get(j).setWeight(0);
                          flag=true;//有路可走;
-                         i=add(j);
+                         i=add(2,j);
+                        //System.out.println("可装货不可卸货:"+ points.get(j).getAddress()+",sum="+sum+",origin="+origin);
+                        break;
                 }else
                  out : if(sum>25&&origin>=0){//可卸货不能装货
                      sum=sum-points.get(j).getWeight();//能卸货不能装货
-                     if(points.get(j).getStock()==0) break out;//当该点的卸货重量为0时，该点不需要卸货
+                     if(points.get(j).getStock()==0)
+                         break out;//当该点的卸货重量为0时，该点不需要卸货
+
                     points.get(j).setStock(0);
                     flag=true;
-                    i=add(j);
-                    break;
+                    i=add(3,j);
+                     //System.out.println("可卸货不能装货:"+ points.get(j).getAddress()+",sum="+sum+",origin="+origin);
+                     break;
                 }else if(sum>25&&origin<0){//不能卸货也不能装货
                     sum-=points.get(j).getWeight();
                     origin+=points.get(j).getStock();
@@ -77,19 +99,34 @@ public class Region {
             }
             //遍历所有的点，已经没有可以走的点，则重新开始新的路径
             if(!flag){
+                //System.out.println("++++++++++++++++++++++++");
+                //System.out.println("=================================");
               /*  System.out.println("---------------执行过---------------------");
                 System.out.println("------------------------re-----------------------");
                 for(Point p: re)
                     System.out.print(p.getAddress()+"\t"+p.getWeight()+"\t"+p.getStock());
                 System.out.println();*/
-                sum=points.get(0).getStock();
-                origin=points.get(0).getStock();
+              /*  sum=points.get(0).getStock();
+                System.out.println("sum="+sum);
+               origin=points.get(0).getStock();
+                System.out.println("origin="+origin);*/
+                origin=0;
+                for(Point p:points){
+                    if(select.contains(p)) continue;
+                    if(p.getX()==0&&p.getY()==0) continue;
+                    origin+=p.getStock();
+                }
+
+
+                if(origin>25) origin=25;
+                //System.out.println("origin="+origin);
+                sum=origin;
                 //加上已经遍历好的上个区域 ，开始下个区域的选择
                 region.add(re);
                 if(re.size()==0) return  region;
 
 
-                re= new  ArrayList<>();
+                re= new ArrayList<>();
                 i=0;
             }
 
@@ -113,9 +150,9 @@ public class Region {
      * @param j
      * @return
      */
-    private int  add(int j){
-        System.out.println("------每次加入地址-----"+points.get(j).getAddress());
-        re.add(points.get(j));//每块区域加上j点
+    private int  add(int status,int j){
+        points.get(j).setStatus(status);
+        re.add(points.get(j));
         select.add(j);
         int i=j;//i->J j为下次遍历的起点
         if(select.size()==points.size()-1) region.add(re);//如果j为最后一个未被选中的点，分区操作结束

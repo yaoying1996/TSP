@@ -7,6 +7,7 @@ public class Point {
     private double y;//y坐标
     private double weight;//每个地方待寄的快递（给快递员）
     private double stock;//每个地方待取的快递(快递员送过去)
+    private int status;//0:所有操作都不可以 1：可卸货可装货 2：可装货不可卸货 3：可卸货不能装货
 
     public Point(double x,double y,String address,double weight,double stock){
         this.x=x;
@@ -48,6 +49,13 @@ public class Point {
         this.address = address;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public double getStock() {
         return stock;

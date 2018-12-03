@@ -27,8 +27,8 @@ public class DistanceMatrix {
                 dmatrix[i][j]=distance(points.get(i),points.get(j));
             }
         long end=System.currentTimeMillis();
-        System.out.println("计算距离矩阵的时间："+(end-strat)+"ms");
-        //print(dmatrix);
+       // System.out.println("计算距离矩阵的时间："+(end-strat)+"ms");
+       // print(dmatrix);
         return dmatrix;
     }
 

@@ -10,6 +10,7 @@ import java.util.Map;
 public class TSPDP {
     private double[][] graph;
     private List<Point> points;
+    private int[][] sum_array;
     HashMap<Integer, ArrayList<Integer>> idtoset = new HashMap<Integer, ArrayList<Integer>>();
     //get subset by id
     HashMap< ArrayList<Integer>, Integer> settoid = new HashMap< ArrayList<Integer>, Integer>();
@@ -43,6 +44,7 @@ public class TSPDP {
         double[][] D = new double[n][settoid.size()];//To record the distance
         int[][] P = new int[n][settoid.size()];//To track the path
 
+
         for(int i = 1; i < n; i++){
             D[i][0] = this.graph[i][0];
         }
@@ -57,15 +59,51 @@ public class TSPDP {
 
                     double min = 10000;
                     double value = 0;
-                    int status=-1; //0:可卸货可装货 1:可装货不可卸货 2:可卸货不能装货 3:不能卸货也不能装货
 
                     for(int j : subset){
+                        System.out.println("+++++++++++++++"+i+"++++++++++++++++++++++");
+                        System.out.println("sum="+sum);
                         ArrayList<Integer> Aminusj = remove(subset, j);
                         int idj = settoid.get(Aminusj);
+                        int status=points.get(j).getStatus();//0:可卸货可装货 1:可装货不可卸货 2:可卸货不能装货 3:不能卸货也不能装货
                         try{
-                            value = this.graph[i][j] + D[j][idj];
+                            System.out.println(points.get(j).getAddress()+":"+points.get(j).getStatus());
+                            if(status==1){
+                                sum+=points.get(j).getWeight()-points.get(j).getStock();
+                                System.out.println("sum="+sum);
+                               /* if(sum>25)
+                                {
+                                    value=Integer.MAX_VALUE;
+                                    sum-=points.get(j).getWeight()+points.get(j).getStock();
+                                    continue;
+                                }*/
+                                value = this.graph[i][j] + D[j][idj];
+                                System.out.println("value="+value+";graph[i][j]="+graph[i][j]+";D[j][idj]="+D[j][idj]);
+                            }else if(status==2){
+                                sum+=points.get(j).getWeight();
+                                System.out.println("sum="+sum);
+                               /* if(sum>25)
+                                {
+                                    value=Integer.MAX_VALUE;
+                                    sum-=points.get(j).getWeight();
+                                    continue;
+                                }*/
+                                value = this.graph[i][j] + D[j][idj];
+                                System.out.println("value="+value+";graph[i][j]="+graph[i][j]+";D[j][idj]="+D[j][idj]);
+                            }else if(status==3){
+                                sum-=points.get(j).getStock();
+                                System.out.println("sum="+sum);
+                               /* if(sum>25)
+                                {
+                                    value=Integer.MAX_VALUE;
+                                    sum+=points.get(j).getStock();
+                                    continue;
+                                }*/
+                                value = this.graph[i][j] + D[j][idj];
+                                System.out.println("value="+value+";graph[i][j]="+graph[i][j]+";D[j][idj]="+D[j][idj]);
+                            }else   value=Integer.MAX_VALUE;
 
-                           // System.out.println("graph["+i+"]["+j+"]+" + "D["+j+"]["+idj+"]="+value);
+                            // System.out.println("graph["+i+"]["+j+"]+" + "D["+j+"]["+idj+"]="+value);
                         }catch(Exception e){
                             System.out.print("Error!___");
                             System.out.println("i: " + String.valueOf(i) + " j: "+ String.valueOf(j));
@@ -74,45 +112,21 @@ public class TSPDP {
                             System.out.println(" D.length: "+ String.valueOf(D.length));
                         }
                         if(value < min && value != 0){
-                            origin-=points.get(j).getStock();
-                            if(origin<0)
-                                sum=sum+points.get(j).getWeight();
-                            else  sum=sum+points.get(j).getWeight()-points.get(j).getStock();
-                            if(sum<=25&&origin>=0){//可卸货可装货
-                                min = value;
-                                P[i][id] = j;
-                                status=0;
-                            }else
-                                out1:   if(sum<=25&&origin<0){//可装货不可卸货
-                                            origin+=points.get(j).getStock();
-                                            if(points.get(j).getWeight()==0) break out1;//当该点的装货货重量为0时，该点不需要装货
-                                            min = value;
-                                            P[i][id] = j;
-                                            status=1;
-                            }else
-                                out : if(sum>25&&origin>=0){//可卸货不能装货
-                                    sum=sum-points.get(j).getWeight();//不能装货能卸货
-                                    if(points.get(j).getStock()==0) break out;//当该点的卸货重量为0时，该点不需要卸货
-                                    min = value;
-                                    P[i][id] = j;
-                                    status=2;
-                                }else if(sum>25&&origin<0){//不能卸货也不能装货
-                                    sum-=points.get(j).getWeight();
-                                    origin+=points.get(j).getStock();
-                                    status=3;
-                                }
+                            min = value;
+                            P[i][id] = j;
 
                         }
                     }
-                    if(min < 9999){
+                    if(min < 999999){
                         D[i][id] = min;
                         int j= P[i][id];
-                        if (status==0){
+                        int status=points.get(j).getStatus();
+                        if (status==1){
                             points.get(j).setStock(0);
                             points.get(j).setWeight(0);
-                        }else if (status==1){
+                        }else if (status==2){
                             points.get(j).setWeight(0);
-                        }else if(status==2){
+                        }else if(status==3){
                             points.get(j).setStock(0);
                         }
                     }
@@ -129,23 +143,52 @@ public class TSPDP {
 
         int vminusv0id = settoid.get(Vminusv0);
         double min = Integer.MAX_VALUE;
+        double value=0;
         for(int j : Vminusv0){
+            int status=points.get(j).getStatus();//0:可卸货可装货 1:可装货不可卸货 2:可卸货不能装货 3:不能卸货也不能装货
             ArrayList<Integer> Vminusv0vj = remove(Vminusv0,j);
             int idj = settoid.get(Vminusv0vj);
-
-            double value = (this.graph[0][j]!=0 && D[j][idj]!=0) ? this.graph[0][j] + D[j][idj]:0;
-
+            if(this.graph[0][j]!=0 && D[j][idj]!=0){
+                if(status==1){
+                    sum+=points.get(j).getWeight()-points.get(j).getStock();
+                    if(sum>25)
+                    {
+                        value=Integer.MAX_VALUE;
+                        sum-=points.get(j).getWeight()+points.get(j).getStock();
+                        continue;
+                    }
+                    value = this.graph[0][j] + D[j][idj];
+                }else if(status==2){
+                    sum+=points.get(j).getWeight();
+                    if(sum>25)
+                    {
+                        value=Integer.MAX_VALUE;
+                        sum-=points.get(j).getWeight();
+                        continue;
+                    }
+                    value = this.graph[0][j] + D[j][idj];
+                }else if(status==3){
+                    sum-=points.get(j).getStock();
+                    if(sum>25)
+                    {
+                        value=Integer.MAX_VALUE;
+                        sum+=points.get(j).getStock();
+                        continue;
+                    }
+                    value = this.graph[0][j] + D[j][idj];
+                }else   value=Integer.MAX_VALUE;
+            }else value=0;
 
             if(value < min && value != 0){
                 min = value;
                 P[0][vminusv0id] = j;
             }
-        }
-        if(min < 99999);
+        }//for
+        //if(min < 99999);
         D[0][vminusv0id] = min;
         generateOpttour(P, Vminusv0);
         long endtime=System.currentTimeMillis();
-        System.out.println("每块区域最优路径计算耗时:"+(endtime-starttime)+"ms");
+      //  System.out.println("每块区域最优路径计算耗时:"+(endtime-starttime)+"ms");
 
         return D[0][vminusv0id];
     }
@@ -172,7 +215,7 @@ public class TSPDP {
         while(!Set.isEmpty()){
 
             int id = settoid.get(Set);
-           // String vertex = String.valueOf(P[start][id]+1);
+            // String vertex = String.valueOf(P[start][id]+1);
             String vertex = points.get(P[start][id]).getAddress();
             path += vertex + " -> ";
             Set = remove(Set, P[start][id]);
@@ -231,7 +274,6 @@ public class TSPDP {
 
 
     /*public static void main(String[] args){
-
         TSPDP test = new TSPDP(new double[][]{
                 {0,16,16,7,13,6},
                 {16,0,9,5,19,7},
@@ -241,6 +283,5 @@ public class TSPDP {
                 {6,7,6,7,13,0}});
         double dis = test.DP();
         System.out.println("最小路径为:"+dis);
-
     }*/
 }
